@@ -1,4 +1,3 @@
-git for windows
 
 $git config --global user.name "Z_Z.W"
 $git config --global user.email "myhongkongzhen@gmail.com"
