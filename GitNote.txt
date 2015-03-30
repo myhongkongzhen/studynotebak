@@ -1,0 +1,152 @@
+git for windows
+
+$git config --global user.name "Z_Z.W"
+$git config --global user.email "myhongkongzhen@gmail.com"
+
+$cd $repository$
+$ git init
+
+$git add readme.txt
+$ git commit -m "wrote a readme file"
+
+$ git status #命令可以让我们时刻掌握仓库当前的状态，上面的命令告诉我们，readme.txt被修改过了，但还没有准备提交的修改。
+$ git diff readme.txt  #看看具体修改了什么内容
+
+$ git add readme.txt #提交修改和提交新文件是一样的两步
+$ git status
+$ git commit -m "add distributed"
+
+$ git log (git log --pretty=oneline) #命令显示从最近到最远的提交日志
+
+
+$ git reset --hard HEAD^  #回退到上一个版本    #上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
+$ git reset --hard 3628164 ##commit id是3628164fb26d48395383f8f31179f24e0882e1e0 前几位就可以了，Git会自动去找
+
+$ git reflog ##Git提供了一个命令git reflog用来记录你的每一次命令
+
+
+-----创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。
+
+
+$ git diff HEAD -- readme.txt  #命令可以查看工作区和版本库里面最新版本的区别
+
+$ git checkout -- readme.txt #文件在工作区的修改全部撤销,就是让这个文件回到最近一次git commit或git add时的状态
+
+
+$ git rm test.txt
+$ git commit -m "remove test.txt" ##确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit
+
+------------------------------------------远程仓库------------------------------------------------------------------
+$ ssh-keygen -t rsa -C "myhongkongzhen@gmail.com"  #第1步：创建SSH Key(在用户主目录里生成.ssh目录)
+第2步：登陆GitHub，打开“Account settings”，“SSH Keys”页面
+然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容
+
+
+登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库
+$git remote add origin git@github.com:myhongkongzhen/myPublicRepo.git #推送本地git庫到github上，远程库的名字就是origin，这是Git默认的叫法(error執行:git remote rm origin)
+$git push -u origin master
+
+
+%%%%%%%%从零开发，那么最好的方式是先创建远程库，然后，从远程库克隆。
+$ git clone git@github.com:myhongkongzhen/dwzspringmvcdemo.git   ##Git支持多种协议，默认的git://使用ssh，但也可以使用https等其他协议
+--------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------分支-------------------------------------------------------------------------------------------------------
+
+$ git checkout -b dev  创建dev分支，然后切换到dev分支
+           ($ git branch dev   $ git checkout dev)
+
+$ git branch  #查看当前分支
+
+$ git checkout master #切换回master分
+
+$ git merge dev #dev分支的工作成果合并到master分支 $$合并指定分支到当前分支
+
+$ git branch -d dev #删除dev分支
+
+                  查看分支：git branch
+                  创建分支：git branch <name>
+                  切换分支：git checkout <name>
+                  创建+切换分支：git checkout -b <name>
+                  合并某分支到当前分支：git merge <name>
+                  删除分支：git branch -d <name>
+
+$ git log --graph --pretty=oneline --abbrev-commit  #看到分支的合并情况
+
+$ git merge --no-ff -m "merge with no-ff" dev  #准备合并dev分支，请注意--no-ff参数，表示禁用Fast forward,加上-m参数，把commit描述写进去
+
+%%%%%%master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活
+
+合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。
+
+--------------------------------------------------------------------------------------------------------------------------
+
+ #查看工作区，就是干净的（除非有没有被Git管理的文件）
+$git stash
+$git stash pop
+$ git stash list
+
+多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash
+$ git stash apply stash@{0}
+
+当手头工作没有完成时，先把工作现场git stash一下，然后去修复bug，修复后，再git stash pop，回到工作现场。
+
+$ git branch -D feature-vulcan  #强行删除分支
+
+$git push origin master(dev分支) #Git就会把该分支推送到远程库对应的远程分支上
+
+$ git checkout -b dev origin/dev  #创建远程origin的dev分支到本地
+
+$ git pull  ###ERROR:用git pull把最新的提交从origin/dev抓下来，然后，在本地合并，解决冲突，再推送
+$ git branch --set-upstream dev origin/dev ##设置dev和origin/dev的链接
+
+
+$ git tag v1.0  ##打一个新标签
+
+$ git log --pretty=oneline --abbrev-commit
+$ git tag v0.9 6224937  #对应的commit id是6224937,打一个新标签
+
+$ git show v0.9 ##查看标签信息
+
+$ git tag -d v0.1  #删除
+
+$ git push origin v1.0  #推送某个标签到远程
+
+$ git push origin --tags ##一次性推送全部尚未推送到远程的本地标签：
+
+$ git push origin :refs/tags/v0.9 ##要删除远程标签就麻烦一点，先从本地删除,然后，从远程删除。删除命令也是push
+
+
+
+$ git config --global alias.co checkout
+$ git config --global alias.ci commit
+$ git config --global alias.br branch
+
+
+
+
+------------------------------------------搭建Git服务器-------------------------------------------------------------------
+创建证书登录：
+
+收集所有需要登录的用户的公钥，就是他们自己的id_rsa.pub文件，把所有公钥导入到/home/git/.ssh/authorized_keys文件里，一行一个
+
+#  git init --bare zzgitrepo.git  #初始化Git仓库
+
+Git就会创建一个裸仓库，裸仓库没有工作区，因为服务器上的Git仓库纯粹是为了共享，所以不让用户直接登录到服务器上去改工作区，并且服务器上的Git仓库通常都以.git结尾。然后，把owner改为git：
+
+第五步，禁用shell登录：出于安全考虑，第二步创建的git用户不允许登录shell，这可以通过编辑/etc/passwd文件完成
+
+第六步，克隆远程仓库
+$ git clone git@172.17.6.172:/opt/zzrepository/zzgitrepo.git
+
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
