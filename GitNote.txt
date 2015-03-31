@@ -42,8 +42,10 @@ $ ssh-keygen -t rsa -C "myhongkongzhen@gmail.com"  #第1步：创建SSH Key(在�
 
 
 登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库
+把一个已有的本地仓库与之关联（執行一邊即可）
 $git remote add origin git@github.com:myhongkongzhen/myPublicRepo.git #推送本地git庫到github上，远程库的名字就是origin，这是Git默认的叫法(error執行:git remote rm origin)
-$git push -u origin master
+
+$git push -u origin master #推送本地到服務器上（多次執行）
 
 
 %%%%%%%%从零开发，那么最好的方式是先创建远程库，然后，从远程库克隆。
@@ -138,6 +140,8 @@ Git就会创建一个裸仓库，裸仓库没有工作区，因为服务器上�
 
 第六步，克隆远程仓库
 $ git clone git@172.17.6.172:/opt/zzrepository/zzgitrepo.git
+
+虛擬機服務器，本機無法clone的情況可能是因為windows防火墻，關閉防火墻即可！！！！！！
 
 ----------------------------------------------------------------------------------------------------------------------
 
